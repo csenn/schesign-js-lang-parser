@@ -1,18 +1,29 @@
 Class Brand {
   description: "Here is some description about something really awesome";
   subClassOf: some_other_label;
-  propertySpecs:
-    a_property required primaryKey,
-    b_property minItems="2" maxItems="3" index="true",
+  properties:
+    a_property required="false",
+    b_property minItems=2 maxItems=3,
     u/some_one/from/1.0.0/property/c_property;
 }
 
-# Property a_property {
-#  description: "some_description";
-# type: Text regex=/some_regec/g;
-# }
+Property a_property {
+  description: "some_description";
+  range: Text;
+}
 
-# Property b_property {
-#  description: "some_description that is reall y olong";
-#  type: Enum values=[" "  ,2,3,]
-#}
+Property b_property {
+  description: "some_description that is reall y olong";
+  range: Enum values=["1", "hello", 2,3,]
+}
+
+Property a_property {
+  description: "some_description";
+  range: Text regex=/some_regec/g;
+}
+
+Property b_property {
+  description: "some_description";
+  range NestedObject;
+  properties: a_property required;
+}

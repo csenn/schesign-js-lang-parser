@@ -16,7 +16,8 @@ export default class InputSteam {
     return this.text.charAt(this.pos)
   }
   next () {
-    const next = this.text.charAt(this.pos++)
+    this.pos++
+    const next = this.text.charAt(this.pos)
     if (next === '\n') {
       this.line++
       this.col = 0

@@ -1,0 +1,5 @@
+Class hello {
+  description: "hello_1";
+  subClassOf: one;
+  description: "fish_1";
+}

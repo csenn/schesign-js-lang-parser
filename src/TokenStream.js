@@ -2,7 +2,7 @@ import { VAR, PUNC, STRING } from './constants'
 
 const isWhitespace = char => ' \t\n'.indexOf(char) >= 0
 const isVariable = char => /[a-z0-9_/.]/i.test(char)
-const isPunc = char => '{}:;[]='.indexOf(char) >= 0
+const isPunc = char => '{}:;[]=,'.indexOf(char) >= 0
 const isInString = char => char !== '"'
 const isInComment = char => char !== '\n'
 
@@ -26,13 +26,15 @@ export default class TokenStream {
   _readWhile (predicate) {
     let str = ''
     while (!this._inputStream.eof() && predicate(this._inputStream.peek())) {
-      str += this._inputStream.next()
+      str += this._inputStream.peek()
+      this._inputStream.next()
     }
     return str
   }
   _readPunc () {
-    this._addToken(PUNC, this._inputStream.peek())
+    const puncToken = this._inputStream.peek()
     this._inputStream.next()
+    this._addToken(PUNC, puncToken)
   }
   _readVariable () {
     const str = this._readWhile(isVariable)
@@ -77,18 +79,19 @@ export default class TokenStream {
       this._inputStream.croak(`Was not expecting char ${char}`)
     }
   }
-  peek () {
-    return this._tokens[this._currentIndex]
+  peek (ahead = 0) {
+    return this._tokens[this._currentIndex + ahead]
   }
   next () {
-    return this._tokens[this._currentIndex++]
+    this._currentIndex++
+    return this._tokens[this._currentIndex]
   }
   eof () {
-    return this._currentIndex >= this._tokens.length
+    return this._currentIndex >= this._tokens.length - 1
   }
   croak (token, message) {
     const { line, col } = this._inputStream.posMap[token.position.start]
-    throw new Error(`Line: ${line} col: ${col}. ${message}`)
+    throw new Error(`[line: ${line} col: ${col}] ${message}`)
   }
 }
 

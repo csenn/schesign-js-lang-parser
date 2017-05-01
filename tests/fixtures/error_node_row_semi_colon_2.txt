@@ -1,0 +1,4 @@
+Class hello {
+  description: "hello"
+  properties: one;
+}
