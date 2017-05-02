@@ -40,16 +40,28 @@ function _readContraint (tokenStream) {
   }
 }
 
+/*
+  something
+  something minItems=2
+  something required values=["hello", 3]
+*/
 function _readReference (tokenStream) {
   const labelToken = tokenStream.next()
   if (labelToken.type !== constants.VAR) {
     tokenStream.croak(labelToken, `Value: "${labelToken.value}" is invalid`)
   }
-
   const constraints = []
   while (!tokenStream.eof()) {
     const next = tokenStream.peek(1)
-    if (next.type !== constants.VAR) break
+    // if (constants.VALID_ROW_TYPES.includes(next.value)) {
+    //   tokenStream.croak(next, `Value: "${next.value}" shssould be ";"`)
+    // }
+    if (next.value === ',' || next.value === ';') {
+      break
+    }
+    if (!constants.VALID_CONTRAINT_TYPES.includes(next.value)) {
+      tokenStream.croak(next, `Value: "${next.value}" must be one of ${constants.VALID_CONTRAINT_TYPES.join(', ')}`)
+    }
     constraints.push(_readContraint(tokenStream))
   }
 
@@ -66,28 +78,48 @@ function _readRow (tokenStream) {
     tokenStream.croak(labelToken, `Value: "${labelToken.value}" is invalid`)
   }
 
-  const colonToken = tokenStream.next()
-  if (colonToken.value !== ':') {
-    tokenStream.croak(colonToken, `"${colonToken.value}" should be :`)
+  if (!constants.VALID_ROW_TYPES.includes(labelToken.value)) {
+    tokenStream.croak(labelToken, `"${labelToken.value}" must be one of: ${constants.VALID_ROW_TYPES.join(', ')}`)
   }
 
+  const colonToken = tokenStream.next()
+  if (colonToken.value !== ':') {
+    tokenStream.croak(colonToken, `"${colonToken.value}" should be ":"`)
+  }
+
+  if (tokenStream.peek(1).value === ';') {
+    tokenStream.croak(colonToken, 'A value must be provided')
+  }
+
+  let iteration = -1
   const right = []
   while (!tokenStream.eof()) {
-    const next = tokenStream.peek(1)
+    let next = tokenStream.peek(1)
     if (next.value === ';') {
       tokenStream.next()
       break
     }
-    if (next.value === ',') {
+
+    /* Multiple items are seperated by a comma */
+    iteration++
+    if (iteration > 0) {
+      if (next.value !== ',') {
+        tokenStream.croak(null, `"${next.value}" should be a comma or semi-colon`)
+      }
       tokenStream.next()
-      continue
+      next = tokenStream.peek(1)
     }
+
     if (next.type === constants.STRING) {
+      /* Can't have multiple strings in list */
+      if (iteration > 0) {
+        tokenStream.croak(null, `Can not have multiple strings`)
+      }
       right.push(tokenStream.next())
     } else if (next.type === constants.VAR) {
       right.push(_readReference(tokenStream))
     } else {
-      tokenStream.croak(null, `${next.value} is invalid`)
+      tokenStream.croak(null, `${next.value} is invalid. Missing a comma, equals, or semi-colon?`)
     }
   }
 
@@ -100,9 +132,13 @@ function _readRow (tokenStream) {
 }
 
 function _readBlock (tokenStream) {
-  const blockToken = tokenStream.peek()
+  const blockToken = tokenStream.next()
   if (blockToken.type !== constants.VAR) {
     tokenStream.croak(blockToken, `Value: "${blockToken.value}" is invalid`)
+  }
+
+  if (!constants.VALID_BLOCK_TYPES.includes(blockToken.value)) {
+    tokenStream.croak(blockToken, `Value: "${blockToken.value}" is not "Class" or "Property"`)
   }
 
   const labelToken = tokenStream.next()
@@ -122,11 +158,15 @@ function _readBlock (tokenStream) {
       tokenStream.next()
       break
     }
+    if (constants.VALID_BLOCK_TYPES.includes(next.value)) {
+      tokenStream.croak(next, `"${next.value}" should be a "}"`)
+    }
     body.push(_readRow(tokenStream))
   }
 
   return {
     type: constants.BLOCK,
+    blockType: blockToken.value,
     label: labelToken,
     body: body
   }

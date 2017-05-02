@@ -11,7 +11,7 @@ export default class TokenStream {
   constructor (inputStream) {
     this._inputStream = inputStream
     this._tokens = []
-    this._currentIndex = 0
+    this._currentIndex = -1 // First call to next should return 0th index
   }
   _addToken (type, value) {
     const startPos = this._inputStream.pos - value.toString().length

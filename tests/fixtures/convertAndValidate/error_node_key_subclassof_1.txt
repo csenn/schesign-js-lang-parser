@@ -1,0 +1,6 @@
+Class hello {
+  subClassOf: a b;
+}
+
+Class a {}
+Class b {}

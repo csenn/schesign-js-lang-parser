@@ -1,2 +1,6 @@
 Class hello {
   description: "hello_1";
+
+Class cool {
+  description: "hello_1";
+}
