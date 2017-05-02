@@ -13,8 +13,8 @@ Property d { range: Url; }
 Property e { range: Email; }
 Property f { range: Hostname; }
 Property g { range: Text regex="[a-z]"; }
-Property g1 { range: Text minLength=0; }
-Property g2 { range: Text minLength=0 maxLength=10; }
+Property g1 { range: Text ; }
+Property g2 { range: Text ; }
 Property t {
   range: NestedObject;
   properties: u, v;

@@ -1,4 +1,4 @@
-import { VAR, PUNC, STRING } from './constants'
+import { VAR, PUNC, STRING, NUM } from './constants'
 
 const isWhitespace = char => ' \t\n'.indexOf(char) >= 0
 const isVariable = char => /[a-z0-9_/.]/i.test(char)
@@ -14,13 +14,25 @@ export default class TokenStream {
     this._currentIndex = 0
   }
   _addToken (type, value) {
+    const startPos = this._inputStream.pos - value.toString().length
+    const endPos = this._inputStream.pos
     this._tokens.push({
       type,
       value,
-      position: {
-        start: this._inputStream.pos - value.length,
-        end: this._inputStream.pos
+      start: {
+        pos: startPos,
+        line: this._inputStream.posMap[startPos].line,
+        col: this._inputStream.posMap[startPos].col
+      },
+      end: {
+        pos: endPos,
+        line: this._inputStream.posMap[endPos].line,
+        col: this._inputStream.posMap[endPos].col
       }
+      // position: {
+      //   start: this._inputStream.pos - value.length,
+      //   end: this._inputStream.pos
+      // }
     })
   }
   _readWhile (predicate) {
@@ -38,7 +50,11 @@ export default class TokenStream {
   }
   _readVariable () {
     const str = this._readWhile(isVariable)
-    this._addToken(VAR, str)
+    if (/^\d*\.?\d*$/.test(str)) {
+      this._addToken(NUM, parseFloat(str))
+    } else {
+      this._addToken(VAR, str)
+    }
   }
   _readString () {
     this._inputStream.next()
@@ -80,17 +96,20 @@ export default class TokenStream {
     }
   }
   peek (ahead = 0) {
-    return this._tokens[this._currentIndex + ahead]
+    return this._tokens[this._currentIndex + ahead] || {}
   }
   next () {
     this._currentIndex++
-    return this._tokens[this._currentIndex]
+    return this._tokens[this._currentIndex] || {}
   }
   eof () {
     return this._currentIndex >= this._tokens.length - 1
   }
   croak (token, message) {
-    const { line, col } = this._inputStream.posMap[token.position.start]
+    const errorToken = token ||
+      this._tokens[this._currentIndex] ||
+      this._tokens[this._tokens.length - 1]
+    const { line, col } = errorToken.start
     throw new Error(`[line: ${line} col: ${col}] ${message}`)
   }
 }

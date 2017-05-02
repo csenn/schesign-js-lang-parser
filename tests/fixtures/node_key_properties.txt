@@ -1,7 +1,0 @@
-Class hello {
-  properties:
-    a,
-    b required,
-    c minItems="1",
-    d required minItems="1" maxItems="2";
-}

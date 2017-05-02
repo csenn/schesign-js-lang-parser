@@ -1,3 +1,0 @@
-Property hello {
-  range: Text regex="hell";
-}

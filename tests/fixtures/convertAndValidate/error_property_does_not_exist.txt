@@ -1,0 +1,7 @@
+Class Brand {
+  properties: a;
+}
+
+Property b {
+  range: Text;
+}

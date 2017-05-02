@@ -16,7 +16,9 @@ export function getAst (txt) {
   return ast
 }
 
-export default function buildGraph (txt) {
+export function getGraph (txt) {
   const ast = getAst(txt)
-  return convertAndValidate(ast)
+  const graph = convertAndValidate(ast)
+  // console.log(graph)
+  return graph
 }

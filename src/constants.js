@@ -1,6 +1,10 @@
-export const VAR = 'VAR'
-export const PUNC = 'PUNC'
-export const STRING = 'STRING'
+export const VAR = 'var'
+export const STRING = 'str'
+export const NUM = 'num'
+export const PUNC = 'punc'
+export const BLOCK = 'block'
+export const ASSIGN = 'assign'
+export const REFERENCE = 'reference'
 
 export const CLASS = 'Class'
 export const PROPERTY = 'Property'
