@@ -1,0 +1,3 @@
+Property hello {
+  range: Text required="3";
+}

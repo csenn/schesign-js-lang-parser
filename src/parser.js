@@ -9,7 +9,8 @@ function _readContraint (tokenStream) {
   const right = []
 
   const addConstraint = constraint => {
-    if (constraint.type !== constants.STRING && constraint.type !== constants.NUM) {
+    const allowed = [constants.STRING, constants.NUM, constants.VAR]
+    if (!allowed.includes(constraint.type)) {
       tokenStream.croak(constraint, `Value: "${constraint.value}" should be a string or number`)
     }
     right.push(constraint)
@@ -59,8 +60,10 @@ function _readReference (tokenStream) {
     if (next.value === ',' || next.value === ';') {
       break
     }
-    if (!constants.VALID_CONTRAINT_TYPES.includes(next.value)) {
-      tokenStream.croak(next, `Value: "${next.value}" must be one of ${constants.VALID_CONTRAINT_TYPES.join(', ')}`)
+
+    const validContraints = Object.keys(constants.VALID_CONTRAINT_TYPES)
+    if (!validContraints.includes(next.value)) {
+      tokenStream.croak(next, `Value: "${next.value}" must be one of ${validContraints.join(', ')}`)
     }
     constraints.push(_readContraint(tokenStream))
   }

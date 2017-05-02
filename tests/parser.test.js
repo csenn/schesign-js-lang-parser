@@ -78,25 +78,22 @@
           const text = readText('error_node_row_constraint_no_label.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 23] Value: "=" must be one of required, minItems, maxItems, array, index, values, min, max, regex')
+          const str = 'Error: [line: 2 col: 23] Value: "=" must be one of'
+          expect(error.toString().indexOf(str) > -1).to.equal(true)
         })
         it('with missing = sign', () => {
           const text = readText('error_node_row_constraint_missing_equals.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 32] Value: "0" must be one of required, minItems, maxItems, array, index, values, min, max, regex')
-        })
-        it('with constraint = var', () => {
-          const text = readText('error_node_row_constraint_var.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 32] Value: "fish" should be a string or number')
+          const str = 'Error: [line: 2 col: 32] Value: "0" must be one of'
+          expect(error.toString().indexOf(str) > -1).to.equal(true)
         })
         it('with double labels', () => {
           const text = readText('error_node_row_constraint_double_label.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 23] Value: "hello_2" must be one of required, minItems, maxItems, array, index, values, min, max, regex')
+          const str = 'Error: [line: 2 col: 23] Value: "hello_2" must be one of'
+          expect(error.toString().indexOf(str) > -1).to.equal(true)
         })
         it('with floating equals', () => {
           const text = readText('error_node_row_constraint_empty_equals.txt')

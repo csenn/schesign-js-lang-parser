@@ -1,0 +1,3 @@
+Property hello {
+  range: Text min=3;
+}

@@ -1,13 +1,5 @@
 import * as constants from './constants'
-
-function addError (context, astNode, message) {
-  // console.log(astNode)
-  context.errors.push({
-    message,
-    start: astNode.start,
-    end: astNode.end
-  })
-}
+import {validateRange} from 'schesign-js-graph-utils/dist/validate'
 
 function getValue (astNode, key, required) {
   const value = astNode[key] && astNode[key].value
@@ -15,13 +7,6 @@ function getValue (astNode, key, required) {
     throw new Error('aabba')
   }
   return value
-}
-
-function getCommonData (astNode) {
-  return {
-    label: getValue(astNode, 'label', true),
-    description: getValue(astNode, 'description') || undefined
-  }
 }
 
 /*
@@ -39,6 +24,16 @@ function _croak (nodeOrToken, message) {
   throw new Error(`${result}${message}`)
 }
 
+// function _processRangeConstraints (referenceNode, constraints) {
+//   Object.keys(constraints).forEach(key => {
+//     const func = constants.VALID_CONTRAINT_TYPES[key]
+//     const values = Array.isArray(constraints[key]) ? constraints[key] : [constraints[key]]
+//     values.forEach(value => {
+//       if (!func(value)) _croak(referenceNode, `Invalid type for constraint ${value}`)
+//     })
+//   })
+// }
+
 function _processPropertyConstraints (referenceNode, constraints) {
   const result = {}
   if ('required' in constraints) {
@@ -51,7 +46,7 @@ function _processPropertyConstraints (referenceNode, constraints) {
     if ('maxItems' in constraints) {
       _croak(referenceNode, '"array" and "maxItems" can not be used together')
     }
-    result.maxItems = 'null'
+    result.maxItems = null
   }
   if (constraints.minItems) {
     result.minItems = parseInt(constraints.minItems)
@@ -77,12 +72,43 @@ function _reduceConstraints (referenceNode, allowed) {
     } else {
       value = constraint.right.map(r => r.value)
     }
-    if (prev[label]) {
+    if (prev[label] !== null && prev[label] !== undefined) {
       _croak(referenceNode, `${label} is a duplicated constraint`)
     }
     prev[label] = value
     return prev
   }, {})
+}
+
+function _getRange (ast) {
+  if (ast.length === 0 || ast[0].type !== 'reference' || ast.length > 1) {
+    _croak(ast && ast[0], 'Range should be a single reference')
+  }
+  const astRange = ast[0]
+  const label = getValue(astRange, 'label', true)
+
+  const validRanges = Object.keys(constants.RANGE_PARENT_MAPPING)
+  if (!validRanges.includes(label)) {
+    _croak(astRange, `Invalid range type "${label}." Must be one of ${validRanges.join(', ')}`)
+  }
+
+  const type = constants.RANGE_PARENT_MAPPING[label]
+  const validConstraints = constants.VALID_RANGE_CONSTRAINTS[type]
+  const reduced = _reduceConstraints(astRange, validConstraints)
+  // _processRangeConstraints(astRange, reduced)
+
+  const range = Object.assign(reduced, { type })
+
+  if (label !== type) {
+    range.format = label
+  }
+
+  // const err = validateRange(range)
+  // if (err) {
+  //   _croak(astRange, `Invalid range: ${err}`)
+  // }
+
+  return range
 }
 
 function _getPropertySpecs (ast) {
@@ -102,55 +128,62 @@ function _getPropertySpecs (ast) {
 }
 
 function _getDescription (ast) {
-  if (ast.length === 0 || ast.length > 1) {
-    /* Should not make it into this one with the parser */
+  if (ast.length === 0 || ast[0].type !== 'str' || ast.length > 1) {
     _croak(ast && ast[0], 'Description should be a single string')
-  }
-  if (ast[0].type !== 'str') {
-    _croak(ast[0], 'Description should be a single string')
   }
   return ast[0].value
 }
 
 function _getSubClassOf (ast) {
-  if (ast.length === 0) {
+  if (ast.length === 0 || ast[0].type !== 'reference' || ast.length > 1) {
     _croak(ast && ast[0], 'SubClassOf should be a single reference')
   }
-  const node = ast[0]
-  if (ast.length > 1 || node.type !== 'reference') {
-    _croak(node, 'SubClassOf should be a single reference')
-  }
-  return node.label.value
+  return ast[0].label.value
 }
 
 const _convertRows = {
   description: _getDescription,
   subClassOf: _getSubClassOf,
-  properties: _getPropertySpecs
+  properties: _getPropertySpecs,
+  range: _getRange
 }
 
-function _getPropertyNode (context, astNode) {
-  const node = Object.assign({type: 'Property'}, getCommonData(astNode))
-  return node
-}
-
-function _getClassNode (context, astNode) {
-  const classNode = {
-    type: 'Class',
+function _getNode (astNode, rowTypes) {
+  const node = {
     label: getValue(astNode, 'label', true)
   }
 
   astNode.body.forEach(row => {
-    const type = row.left.value
-    if (classNode[type]) {
-      throw new Error('type already added')
+    const rowKey = row.left.value
+    if (!rowTypes.includes(rowKey)) {
+      _croak(row.left, `"${rowKey}" is invalid in this block`)
     }
-    classNode[type] = _convertRows[type](row.right)
+    if (rowKey in node) {
+      _croak(row.left, `"${rowKey}" is declared multiple times in this block`)
+    }
+    node[rowKey] = _convertRows[rowKey](row.right)
   })
 
-  // const node = Object.assign({type: 'Class'}, getCommonData(astNode))
-  // node.propertySpecs = getPropertySpecs(context, astNode)
-  return classNode
+  return node
+}
+
+function _getClassNode (astNode) {
+  const node = _getNode(astNode, constants.VALID_CLASS_ROW_TYPES)
+  if (node.properties) {
+    node.propertySpecs = node.properties
+    delete node.properties
+  }
+  return Object.assign(node, {type: 'Class'})
+}
+
+function _getPropertyNode (astNode) {
+  const node = _getNode(astNode, constants.VALID_PROPERTY_ROW_TYPES)
+  /* We move the properties into the range here. A bit wierd, but clean enough */
+  if (node.range.type === 'NestedObject') {
+    node.range.propertySpecs = node.properties
+    delete node.properties
+  }
+  return Object.assign(node, {type: 'Property'})
 }
 
 export default function (ast) {
@@ -163,8 +196,14 @@ export default function (ast) {
   }
 
   ast.forEach(astNode => {
-    const func = astNode.blockType === constants.CLASS ? _getClassNode : _getPropertyNode
-    graph.push(func(context, astNode))
+    const func = astNode.blockType === constants.CLASS
+      ? _getClassNode
+      : _getPropertyNode
+
+    // graph.push(Object.assign({type: astNode.blockType}, _getNode(astNode, rowTypes)))
+
+    // const func = astNode.blockType === constants.CLASS ? _getClassNode : _getPropertyNode
+    graph.push(func(astNode))
   })
 
   if (context.errors.length) {
@@ -173,7 +212,7 @@ export default function (ast) {
     const message = `[line: ${line} col: ${col}] ${error.message}`
     throw new Error(message)
   }
-  console.log(graph)
+  // console.log(graph)
 
   return graph
 }

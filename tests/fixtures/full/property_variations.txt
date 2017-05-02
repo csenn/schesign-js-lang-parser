@@ -1,0 +1,47 @@
+Class class1 {
+  description: "First Description";
+  properties:
+    a, a1, b required, c array, d, e, f, g, g1, g2, h,
+    i, j, k, l, m, n, o, p, q, r, s, s1, s2, s3, t, x;
+}
+Class class2 {
+  properties: y;
+}
+
+Property a { range: Boolean; }
+Property a1 { range: Text; }
+Property b { range: Text; }
+Property c { range: Text; }
+Property d { range: Url; }
+Property e { range: Email; }
+Property f { range: Hostname; }
+Property g { range: Text regex="[a-z]"; }
+Property g1 { range: Text minLength=0; }
+Property g2 { range: Text minLength=0 maxLength=10; }
+Property h { range: Number ; }
+Property i { range: Int ; }
+Property j { range: Int8 ; }
+Property k { range: Int16 ; }
+Property l { range: Int32 ; }
+Property m { range: Int64 ; }
+Property n { range: Float32 ; }
+Property o { range: Float64 ; }
+Property p { range: Number min=0; }
+Property q { range: Number min=0 max=10; }
+Property r { range: Enum values=["one", "two", 3, 4.5]; }
+Property s { range: DateTime ; }
+Property s1 { range: ShortDate ; }
+Property s2 { range: DateTime ; }
+Property s3 { range: Time ; }
+Property t {
+  range: NestedObject;
+  properties: u, v;
+}
+Property u { range: Text; }
+Property v { range: NestedObject; properties: w; }
+Property w { range: Text; }
+Property x {
+  range: LinkedClass
+  ref=class2;
+}
+Property y { range: Text; }

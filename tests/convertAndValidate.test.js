@@ -9,6 +9,20 @@ const readText = name => fs.readFileSync(path.resolve(__dirname, 'fixtures', 'co
 
 describe('convertAndValidate should', () => {
   describe('handle errors and should fail', () => {
+    describe('blocks', () => {
+      it('with invalid row', () => {
+        const text = readText('error_invalid_class_row.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.toString()).to.equal('Error: [line: 2 col: 3] "range" is invalid in this block')
+      })
+      it('with duplicate description', () => {
+        const text = readText('error_duplicate_properties.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.toString()).to.equal('Error: [line: 3 col: 3] "description" is declared multiple times in this block')
+      })
+    })
     describe('description', () => {
       it('with double description', () => {
         const text = readText('error_node_key_description_1.txt')
@@ -28,7 +42,8 @@ describe('convertAndValidate should', () => {
         const text = readText('error_node_key_subclassof_1.txt')
         let error
         try { getGraph(text) } catch (err) { error = err }
-        expect(error.toString()).to.equal('Error: [line: 2 col: 17] Value: "b" must be one of required, minItems, maxItems, array, index, values, min, max, regex')
+        const str = 'Error: [line: 2 col: 17] Value: "b" must be one'
+        expect(error.toString().indexOf(str) > -1).to.equal(true)
       })
       it('with non reference', () => {
         const text = readText('error_node_key_subclassof_2.txt')
@@ -81,17 +96,32 @@ describe('convertAndValidate should', () => {
         expect(error.toString()).to.equal('Error: [line: 2 col: 15] "array" and "maxItems" can not be used together')
       })
     })
-
-    it.skip('bla bla', () => {
-      const text = readText('../property_variations.txt')
-      let error
-
-      const graph = getGraph(text)
-
-      console.log(JSON.stringify(graph, null, 2))
-
-      try { getGraph(text) } catch (err) { error = err }
-      expect(error.toString()).to.equal('Error: [line: 1 col: 0] Value: ";" is not "Class" or "Property"')
+    describe('range', () => {
+      it('with string', () => {
+        const text = readText('error_node_key_range_1.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.toString()).to.equal('Error: [line: 2 col: 12] Range should be a single reference')
+      })
+      it('with multiple types', () => {
+        const text = readText('error_node_key_range_2.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.toString()).to.equal('Error: [line: 2 col: 10] Range should be a single reference')
+      })
+      it('bad range type', () => {
+        const text = readText('error_node_key_range_3.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        const str = 'Error: [line: 2 col: 10] Invalid range type "text." Must be'
+        expect(error.toString().indexOf(str) > -1).to.equal(true)
+      })
+      it('with wrong constraint type', () => {
+        const text = readText('error_node_key_range_4.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.toString()).to.equal('Error: [line: 2 col: 10] "min" is invalid. Can only be one of regex, minLength, maxLength')
+      })
     })
   })
 })

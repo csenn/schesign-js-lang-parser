@@ -1,3 +1,4 @@
 Class hello {
   description: "Fish";
+  description: "Hello";
 }
