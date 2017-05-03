@@ -108,52 +108,6 @@
         try { getAst(text) } catch (err) { error = err }
         expect(error.message).to.equal('Line 4, Col 24 Should not declare "description" multiple times')
       })
-      describe('for properties', () => {
-        it.skip('when property is string', () => {
-          const text = readText('error_node_key_properties_1.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 17 "hello_1" must be a property reference')
-        })
-        it.skip('when property has invalid contraint', () => {
-          const text = readText('error_node_key_properties_2.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 23 "fish" must be one of: required, minItems, maxItems, array, index')
-        })
-        it.skip('when property has equal sign but no constraint', () => {
-          const text = readText('error_node_key_properties_3.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 31 = must be followed by a valid constraint')
-        })
-        it.skip('when property has non text constraint', () => {
-          const text = readText('error_node_key_properties_4.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 31 = must be followed by a valid constraint')
-        })
-      })
-      describe('for range', () => {
-        it.skip('when type is string', () => {
-          const text = readText('error_node_key_range_1.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 12 "hello_1" must be a property reference')
-        })
-        it.skip('when type has invalid contraint', () => {
-          const text = readText('error_node_key_range_2.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 18 "soie" must be one of: values, min, max, regex')
-        })
-        it.skip('when type has equal sign but no constraint', () => {
-          const text = readText('error_node_key_range_3.txt')
-          let error
-          try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 21 "=" must be followed by a valid constraint')
-        })
-      })
     })
     describe('build ast', () => {
       it('create an empty class', () => {
@@ -205,32 +159,41 @@
           }
         ])
       })
-      it.skip('create a subclassof', () => {
+      it('create a subclassof', () => {
         const text = readText('node_key_subclassof.txt')
         const ast = getAst(text)
-        expect(ast).to.deep.equal({
-          'classes': [
-            {
-              'label': {
-                'position': {
-                  'end': 11,
-                  'start': 6
-                },
-                'type': 'VAR',
-                'value': 'hello'
+        expect(ast).to.deep.equal([
+          {
+            blockType: 'Class',
+            type: 'block',
+            label: {
+              type: 'var',
+              value: 'hello',
+              start: { col: 6, line: 1, pos: 6 },
+              end: { col: 11, line: 1, pos: 11 }
+            },
+            body: [{
+              type: 'assign',
+              operator: ':',
+              left: {
+                type: 'var',
+                value: 'subClassOf',
+                start: {col: 3, line: 2, pos: 16},
+                end: {col: 13, line: 2, pos: 26}
               },
-              'subClassOf': {
-                'position': {
-                  'end': 32,
-                  'start': 28
+              right: [{
+                type: 'reference',
+                label: {
+                  type: 'var',
+                  value: 'fish',
+                  start: {col: 15, line: 2, pos: 28},
+                  end: {col: 19, line: 2, pos: 32}
                 },
-                'type': 'VAR',
-                'value': 'fish'
-              }
-            }
-          ],
-          'properties': []
-        })
+                constraints: []
+              }]
+            }]
+          }
+        ])
       })
       it('create properties', () => {
         const text = readText('node_key_properties.txt')
@@ -408,11 +371,6 @@
             }]
           }
         ])
-      })
-      it.skip('should balalal a', () => {
-        const text = readText('basic.txt')
-        const ast = getAst(text)
-        expect(ast).to.deep.equal()
       })
     })
   })

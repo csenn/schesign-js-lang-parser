@@ -1,0 +1,3 @@
+Property hello {
+  subClassOf: Text;
+}

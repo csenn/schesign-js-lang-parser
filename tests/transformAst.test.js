@@ -4,23 +4,41 @@ import { expect } from 'chai'
 import { getGraph } from '../src'
 const { describe, it } = global
 
-const readText = name => fs.readFileSync(path.resolve(__dirname, 'fixtures', 'convertAndValidate', name), 'utf-8')
+const readText = name => fs.readFileSync(path.resolve(__dirname, 'fixtures', 'transformAst', name), 'utf-8')
 // const basic = readText('basic.txt')
 
-describe('convertAndValidate should', () => {
+describe('transformAst should', () => {
   describe('handle errors and should fail', () => {
     describe('blocks', () => {
-      it('with invalid row', () => {
+      it('with invalid class row', () => {
         const text = readText('error_invalid_class_row.txt')
         let error
         try { getGraph(text) } catch (err) { error = err }
         expect(error.message).to.equal('Line 2, Col 3 "range" is invalid in this block')
+      })
+      it('with invalid property row', () => {
+        const text = readText('error_invalid_property_row.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 2, Col 3 "subClassOf" is invalid in this block')
       })
       it('with duplicate description', () => {
         const text = readText('error_duplicate_properties.txt')
         let error
         try { getGraph(text) } catch (err) { error = err }
         expect(error.message).to.equal('Line 3, Col 3 "description" is declared multiple times in this block')
+      })
+      it('with duplicate class blocks', () => {
+        const text = readText('error_duplicate_block_class.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 5, Col 7 Class "Hello" has already been declared')
+      })
+      it('with duplicate property blocks', () => {
+        const text = readText('error_duplicate_block_property.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 5, Col 10 Property "a" has already been declared')
       })
     })
     describe('description', () => {
@@ -121,6 +139,32 @@ describe('convertAndValidate should', () => {
         let error
         try { getGraph(text) } catch (err) { error = err }
         expect(error.message).to.equal('Line 2, Col 10 "min" is invalid. Can only be one of regex, minLength, maxLength')
+      })
+    })
+    describe('for unresolved references', () => {
+      it('when property in class does not resolve', () => {
+        const text = readText('error_reference_property.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 2, Col 15 Property "a" has not been defined')
+      })
+      it('when property in NestedObject does not resolve', () => {
+        const text = readText('error_reference_property_nested.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 3, Col 15 Property "b" has not been defined')
+      })
+      it('when LinkedClass does not resolve', () => {
+        const text = readText('error_reference_linked_class.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 2, Col 10 Class "ClassA" has not been defined')
+      })
+      it('when subClassOf does not resolve', () => {
+        const text = readText('error_reference_subclassof.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 2, Col 15 Class "B" has not been defined')
       })
     })
   })

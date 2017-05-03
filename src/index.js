@@ -1,7 +1,8 @@
-import InputStream from './InputStream'
-import TokenStream from './TokenStream'
-import { parse } from './parser'
-import convertAndValidate from './convertAndValidate'
+import InputStream from './parser/InputStream'
+import TokenStream from './parser/TokenStream'
+import { parse } from './parser/parser'
+import transformAst from './transformAst'
+// import { validateGraph } from '../../schesign-js-graph-utils/dist/validate'
 
 export function getTokenStream (txt) {
   const inputStream = new InputStream(txt)
@@ -18,7 +19,12 @@ export function getAst (txt) {
 
 export function getGraph (txt) {
   const ast = getAst(txt)
-  const graph = convertAndValidate(ast)
-  // console.log(graph)
+  const graph = transformAst(ast)
+
+  // const err = validateGraph(graph)
+  // if (err) {
+  //   throw new Error(err)
+  // }
+
   return graph
 }

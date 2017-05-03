@@ -1,0 +1,7 @@
+Property a {
+  range: Text;
+}
+
+Property a {
+  range: Number;
+}

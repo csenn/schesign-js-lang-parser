@@ -1,0 +1,3 @@
+Property a {
+  range: LinkedClass ref=ClassA;
+}

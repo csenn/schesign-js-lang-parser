@@ -1,4 +1,4 @@
-import * as constants from './constants'
+import * as constants from '../constants'
 
 function _readContraint (tokenStream) {
   const constraintToken = tokenStream.next()

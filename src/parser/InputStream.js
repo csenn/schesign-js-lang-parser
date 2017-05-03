@@ -1,3 +1,4 @@
+
 export default class InputSteam {
   constructor (text) {
     this.text = text

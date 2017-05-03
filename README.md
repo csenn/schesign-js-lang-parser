@@ -35,7 +35,7 @@ Class Class1 {
   # constraints:
     # required: boolean (optional)
     # array: boolean (optional)
-    # primary: boolean (optional)
+    # primaryKey: boolean (optional)
     # minItems: number (optional)
     # maxItems: number (optional)
     # Note: required is shorthand for minItems=1. These can't be used together
