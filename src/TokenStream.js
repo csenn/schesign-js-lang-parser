@@ -1,3 +1,4 @@
+import PositionError from './PositionError'
 import { VAR, PUNC, STRING, NUM } from './constants'
 
 const isWhitespace = char => ' \t\n'.indexOf(char) >= 0
@@ -110,7 +111,8 @@ export default class TokenStream {
       this._tokens[this._currentIndex] ||
       this._tokens[this._tokens.length - 1]
     const { line, col } = errorToken.start
-    throw new Error(`[line: ${line} col: ${col}] ${message}`)
+    const position = { start: errorToken.start, end: errorToken.end }
+    throw new PositionError(`Line ${line}, Col ${col} ${message}`, position)
   }
 }
 

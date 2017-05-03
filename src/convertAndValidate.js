@@ -1,3 +1,4 @@
+import PositionError from './PositionError'
 import * as constants from './constants'
 import {validateRange} from 'schesign-js-graph-utils/dist/validate'
 
@@ -15,13 +16,10 @@ function getValue (astNode, key, required) {
   in the label, lets check both spots
 */
 function _croak (nodeOrToken, message) {
-  let result = ''
-  if (nodeOrToken) {
-    const token = nodeOrToken.label || nodeOrToken
-    const { line, col } = token.start
-    result += `[line: ${line} col: ${col}] `
-  }
-  throw new Error(`${result}${message}`)
+  const token = nodeOrToken.label || nodeOrToken
+  const { line, col } = token.start
+  const position = { start: token.start, end: token.end }
+  throw new PositionError(`Line ${line}, Col ${col} ${message}`, position)
 }
 
 // function _processRangeConstraints (referenceNode, constraints) {

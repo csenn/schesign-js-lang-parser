@@ -4,6 +4,7 @@ Class class1 {
     a, a1, b required, c array, d, e, f, g, g1, g2, h,
     i, j, k, l, m, n, o, p, q, r, s, s1, s2, s3, t, x;
 }
+
 Class class2 {
   properties: y;
 }
@@ -40,8 +41,5 @@ Property t {
 Property u { range: Text; }
 Property v { range: NestedObject; properties: w; }
 Property w { range: Text; }
-Property x {
-  range: LinkedClass
-  ref=class2;
-}
+Property x { range: LinkedClass ref=class2; }
 Property y { range: Text; }

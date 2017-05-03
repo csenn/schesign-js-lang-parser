@@ -14,25 +14,25 @@
           const text = readText('error_node_name.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 1 col: 0] Value: "class" is not "Class" or "Property"')
+          expect(error.message).to.equal('Line 1, Col 0 Value: "class" is not "Class" or "Property"')
         })
         it('when node name is not Var', () => {
           const text = readText('error_node_name_type.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 1 col: 0] Value: ";" is invalid')
+          expect(error.message).to.equal('Line 1, Col 0 Value: ";" is invalid')
         })
         it('without opening bracket', () => {
           const text = readText('error_node_bracket_opening.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 1 col: 12] [ should be a "{"')
+          expect(error.message).to.equal('Line 1, Col 12 [ should be a "{"')
         })
         it('without closing bracket', () => {
           const text = readText('error_node_bracket_closing.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 4 col: 1] "Class" should be a "}"')
+          expect(error.message).to.equal('Line 4, Col 1 "Class" should be a "}"')
         })
       })
       describe('reading row', () => {
@@ -40,37 +40,37 @@
           const text = readText('error_node_row_colon.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 15] "hello" should be ":"')
+          expect(error.message).to.equal('Line 2, Col 15 "hello" should be ":"')
         })
         it('without semi colon 1', () => {
           const text = readText('error_node_row_semi_colon_1.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 18] "}" should be a comma or semi-colon')
+          expect(error.message).to.equal('Line 2, Col 18 "}" should be a comma or semi-colon')
         })
         it('without semi colon 2', () => {
           const text = readText('error_node_row_semi_colon_2.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 18] "properties" should be a comma or semi-colon')
+          expect(error.message).to.equal('Line 2, Col 18 "properties" should be a comma or semi-colon')
         })
         it('with bad node key', () => {
           const text = readText('error_node_row_key.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 3] "hello" must be one of: description, subClassOf, properties, range')
+          expect(error.message).to.equal('Line 2, Col 3 "hello" must be one of: description, subClassOf, properties, range')
         })
         it('with no value', () => {
           const text = readText('error_node_row_missing_value.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 14] A value must be provided')
+          expect(error.message).to.equal('Line 2, Col 14 A value must be provided')
         })
         it('with double string', () => {
           const text = readText('error_node_row_double_string.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 23] Can not have multiple strings')
+          expect(error.message).to.equal('Line 2, Col 23 Can not have multiple strings')
         })
       })
       describe('reading row constraint', () => {
@@ -78,60 +78,60 @@
           const text = readText('error_node_row_constraint_no_label.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          const str = 'Error: [line: 2 col: 23] Value: "=" must be one of'
-          expect(error.toString().indexOf(str) > -1).to.equal(true)
+          const str = 'Line 2, Col 23 Value: "=" must be one of'
+          expect(error.message.indexOf(str) > -1).to.equal(true)
         })
         it('with missing = sign', () => {
           const text = readText('error_node_row_constraint_missing_equals.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          const str = 'Error: [line: 2 col: 32] Value: "0" must be one of'
-          expect(error.toString().indexOf(str) > -1).to.equal(true)
+          const str = 'Line 2, Col 32 Value: "0" must be one of'
+          expect(error.message.indexOf(str) > -1).to.equal(true)
         })
         it('with double labels', () => {
           const text = readText('error_node_row_constraint_double_label.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          const str = 'Error: [line: 2 col: 23] Value: "hello_2" must be one of'
-          expect(error.toString().indexOf(str) > -1).to.equal(true)
+          const str = 'Line 2, Col 23 Value: "hello_2" must be one of'
+          expect(error.message.indexOf(str) > -1).to.equal(true)
         })
         it('with floating equals', () => {
           const text = readText('error_node_row_constraint_empty_equals.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 32] Value: ";" should be a string or number')
+          expect(error.message).to.equal('Line 2, Col 32 Value: ";" should be a string or number')
         })
       })
       it.skip('with node with duplicate keys', () => {
         const text = readText('error_node_row_repeat.txt')
         let error
         try { getAst(text) } catch (err) { error = err }
-        expect(error.toString()).to.equal('Error: [line: 4 col: 24] Should not declare "description" multiple times')
+        expect(error.message).to.equal('Line 4, Col 24 Should not declare "description" multiple times')
       })
       describe('for properties', () => {
         it.skip('when property is string', () => {
           const text = readText('error_node_key_properties_1.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 17] "hello_1" must be a property reference')
+          expect(error.message).to.equal('Line 2, Col 17 "hello_1" must be a property reference')
         })
         it.skip('when property has invalid contraint', () => {
           const text = readText('error_node_key_properties_2.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 23] "fish" must be one of: required, minItems, maxItems, array, index')
+          expect(error.message).to.equal('Line 2, Col 23 "fish" must be one of: required, minItems, maxItems, array, index')
         })
         it.skip('when property has equal sign but no constraint', () => {
           const text = readText('error_node_key_properties_3.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 31] = must be followed by a valid constraint')
+          expect(error.message).to.equal('Line 2, Col 31 = must be followed by a valid constraint')
         })
         it.skip('when property has non text constraint', () => {
           const text = readText('error_node_key_properties_4.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 31] = must be followed by a valid constraint')
+          expect(error.message).to.equal('Line 2, Col 31 = must be followed by a valid constraint')
         })
       })
       describe('for range', () => {
@@ -139,19 +139,19 @@
           const text = readText('error_node_key_range_1.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 12] "hello_1" must be a property reference')
+          expect(error.message).to.equal('Line 2, Col 12 "hello_1" must be a property reference')
         })
         it.skip('when type has invalid contraint', () => {
           const text = readText('error_node_key_range_2.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 18] "soie" must be one of: values, min, max, regex')
+          expect(error.message).to.equal('Line 2, Col 18 "soie" must be one of: values, min, max, regex')
         })
         it.skip('when type has equal sign but no constraint', () => {
           const text = readText('error_node_key_range_3.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.toString()).to.equal('Error: [line: 2 col: 21] = must be followed by a valid constraint')
+          expect(error.message).to.equal('Line 2, Col 21 "=" must be followed by a valid constraint')
         })
       })
     })

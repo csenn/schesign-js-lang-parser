@@ -51,7 +51,7 @@ function _readConstraintRow (tokenStream, tokens, constraintMap) {
     if (equalsToken && equalsToken.value === '=') {
       const constraintValueToken = tokens[i + 2]
       if (!constraintValueToken || constraintValueToken.type !== constants.STRING) {
-        tokenStream.croak(equalsToken, `${equalsToken.value} must be followed by a valid constraint`)
+        tokenStream.croak(equalsToken, `"${equalsToken.value}" must be followed by a valid constraint`)
       }
       constraint.right = constraintValueToken
       /* Skip = and constraintValue tokens here */
