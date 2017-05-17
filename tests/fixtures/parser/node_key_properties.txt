@@ -2,5 +2,5 @@ Class hello {
   properties:
     a,
     b required,
-    c required minItems=1 maxItems="null";
+    c required minItems=1 maxItems=10;
 }

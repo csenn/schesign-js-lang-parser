@@ -1,0 +1,8 @@
+Class Class1 {
+  properties: property_a;
+}
+
+Property property_a {
+  range: NestedObject;
+  properties: property_a;
+}

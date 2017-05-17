@@ -1,7 +1,7 @@
 /* Easily expose position of error */
 export default function PositionError (message, position) {
   this.name = 'PositionError'
-  this.message = message || 'Default Message'
+  this.message = message || 'There was an error'
   this.position = position
   this.stack = (new Error()).stack
 }

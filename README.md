@@ -118,6 +118,12 @@ Property e {
 Property e { range: LinkedClass ref=Class2; }
 Property e1 { range: LinkedClass ref=u/user_a/design_a/1.0.0/class/class_a; }
 
+
+TODO:
+  excludeParentProperties
+  Geo coordinates
+  LinkedClass relation
+
 [
   {
     type: "block",
@@ -182,3 +188,4 @@ Property e1 { range: LinkedClass ref=u/user_a/design_a/1.0.0/class/class_a; }
   value: "Class",
 
 ]
+

@@ -1,3 +1,5 @@
 Class hello {
   properties: hello_1 array maxItems="2";
 }
+
+Property hello_1 { range: Text; }

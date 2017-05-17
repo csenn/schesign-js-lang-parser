@@ -4,8 +4,8 @@
   import {getAst} from '../src'
   const { describe, it } = global
 
-  const readText = name => fs.readFileSync(path.resolve(__dirname, 'fixtures', 'parser', name), 'utf-8')
-// const basic = readText('basic.txt')
+  const readText = name =>
+    fs.readFileSync(path.resolve(__dirname, 'fixtures', 'parser', name), 'utf-8')
 
   describe('parser should', () => {
     describe('handle errors and should fail', () => {
@@ -58,7 +58,7 @@
           const text = readText('error_node_row_key.txt')
           let error
           try { getAst(text) } catch (err) { error = err }
-          expect(error.message).to.equal('Line 2, Col 3 "hello" must be one of: description, subClassOf, properties, range')
+          expect(error.message).to.equal('Line 2, Col 3 "hello" must be one of: description, subClassOf, properties, range, excludeParentProperties')
         })
         it('with no value', () => {
           const text = readText('error_node_row_missing_value.txt')
@@ -101,12 +101,6 @@
           try { getAst(text) } catch (err) { error = err }
           expect(error.message).to.equal('Line 2, Col 32 Value: ";" should be a string or number')
         })
-      })
-      it.skip('with node with duplicate keys', () => {
-        const text = readText('error_node_row_repeat.txt')
-        let error
-        try { getAst(text) } catch (err) { error = err }
-        expect(error.message).to.equal('Line 4, Col 24 Should not declare "description" multiple times')
       })
     })
     describe('build ast', () => {
@@ -192,6 +186,88 @@
                 constraints: []
               }]
             }]
+          }
+        ])
+      })
+      it('create excludeParentProperties', () => {
+        const text = readText('node_key_excludeparentproperties.txt')
+        const ast = getAst(text)
+        expect(ast).to.deep.equal([
+          {
+            'type': 'block',
+            'blockType': 'Class',
+            'label': {
+              'type': 'var',
+              'value': 'hello',
+              'start': {
+                'pos': 6,
+                'line': 1,
+                'col': 6
+              },
+              'end': {
+                'pos': 11,
+                'line': 1,
+                'col': 11
+              }
+            },
+            'body': [
+              {
+                'type': 'assign',
+                'operator': ':',
+                'left': {
+                  'type': 'var',
+                  'value': 'excludeParentProperties',
+                  'start': {
+                    'pos': 16,
+                    'line': 2,
+                    'col': 3
+                  },
+                  'end': {
+                    'pos': 39,
+                    'line': 2,
+                    'col': 26
+                  }
+                },
+                'right': [
+                  {
+                    'type': 'reference',
+                    'label': {
+                      'type': 'var',
+                      'value': 'fish',
+                      'start': {
+                        'pos': 41,
+                        'line': 2,
+                        'col': 28
+                      },
+                      'end': {
+                        'pos': 45,
+                        'line': 2,
+                        'col': 32
+                      }
+                    },
+                    'constraints': []
+                  },
+                  {
+                    'type': 'reference',
+                    'label': {
+                      'type': 'var',
+                      'value': 'hamster',
+                      'start': {
+                        'pos': 47,
+                        'line': 2,
+                        'col': 34
+                      },
+                      'end': {
+                        'pos': 54,
+                        'line': 2,
+                        'col': 41
+                      }
+                    },
+                    'constraints': []
+                  }
+                ]
+              }
+            ]
           }
         ])
       })
@@ -296,10 +372,10 @@
                         end: {col: 35, line: 5, pos: 85}
                       },
                       right: [{
-                        type: 'str',
-                        value: 'null',
-                        start: {col: 38, line: 5, pos: 88},
-                        end: {col: 42, line: 5, pos: 92}
+                        type: 'num',
+                        value: 10,
+                        start: {col: 36, line: 5, pos: 86},
+                        end: {col: 38, line: 5, pos: 88}
                       }]
                     }
                   ]

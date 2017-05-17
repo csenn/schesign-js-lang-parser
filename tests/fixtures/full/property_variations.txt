@@ -1,45 +1,52 @@
 Class class1 {
   description: "First Description";
   properties:
-    a, a1, b required, c array, d, e, f, g, g1, g2, h,
-    i, j, k, l, m, n, o, p, q, r, s, s1, s2, s3, t, x;
+    a,
+    a1 required,
+    a2 array,
+    a3 array minItems=1 maxItems=10,
+    a4 primaryKey,
+    a5 index,
+    a6 unique,
+    b, b1, b2, b3, b4, b5,
+    c, c1, c2, c3, c4, c5, c6, c7, c8,
+    d, e, e1, e2, f, g;
 }
 
-Class class2 {
-  properties: y;
-}
+Class class2 {}
 
 Property a { range: Boolean; }
-Property a1 { range: Text; }
+Property a1 { range: Boolean; }
+Property a2 { range: Boolean; }
+Property a3 { range: Boolean; }
+Property a4 { range: Boolean; }
+Property a5 { range: Boolean; }
+Property a6 { range: Boolean; }
 Property b { range: Text; }
-Property c { range: Text; }
-Property d { range: Url; }
-Property e { range: Email; }
-Property f { range: Hostname; }
-Property g { range: Text regex="[a-z]"; }
-Property g1 { range: Text minLength=0; }
-Property g2 { range: Text minLength=0 maxLength=10; }
-Property h { range: Number ; }
-Property i { range: Int ; }
-Property j { range: Int8 ; }
-Property k { range: Int16 ; }
-Property l { range: Int32 ; }
-Property m { range: Int64 ; }
-Property n { range: Float32 ; }
-Property o { range: Float64 ; }
-Property p { range: Number min=0; }
-Property q { range: Number min=0 max=10; }
-Property r { range: Enum values=["one", "two", 3, 4.5]; }
-Property s { range: DateTime ; }
-Property s1 { range: ShortDate ; }
-Property s2 { range: DateTime ; }
-Property s3 { range: Time ; }
-Property t {
+Property b1 { range: Text regex="[a-z]"; }
+Property b2 { range: Text minLength=0 maxLength=10; }
+Property b3 { range: Url; }
+Property b4 { range: Email; }
+Property b5 { range: Hostname; }
+Property c { range: Number; }
+Property c1 { range: Number min=0 max=10; }
+Property c2 { range: Int; }
+Property c3 { range: Int8; }
+Property c4 { range: Int16; }
+Property c5 { range: Int32; }
+Property c6 { range: Int64; }
+Property c7 { range: Float32; }
+Property c8 { range: Float64; }
+Property d { range: Enum values=["one", "two", 3, 4.5]; }
+Property e { range: DateTime; }
+Property e1 { range: ShortDate; }
+Property e2 { range: Time; }
+Property f {
   range: NestedObject;
-  properties: u, v;
+  properties: a, f1;
 }
-Property u { range: Text; }
-Property v { range: NestedObject; properties: w; }
-Property w { range: Text; }
-Property x { range: LinkedClass ref=class2; }
-Property y { range: Text; }
+Property f1 {
+  range: NestedObject;
+  properties: a;
+}
+Property g { range: LinkedClass ref=class2; }

@@ -13,19 +13,23 @@ export const DESCRIPTION = 'description'
 export const SUBCLASSOF = 'subClassOf'
 export const PROPERTIES = 'properties'
 export const RANGE = 'range'
+export const EXCLUDE_PARENT_PROPERTIES = 'excludeParentProperties'
 
+export const REF = 'ref'
 export const CONSTRAINT_REQUIRED = 'required'
+export const CONSTRAINT_PRIMARY_KEY = 'primaryKey'
+export const CONSTRAINT_UNIQUE = 'unique'
+export const CONSTRAINT_INDEX = 'index'
+export const CONSTRAINT_ARRAY = 'array'
 export const CONSTRAINT_MIN_ITEMS = 'minItems'
 export const CONSTRAINT_MAX_ITEMS = 'maxItems'
+
 export const CONSTRAINT_MIN_LENGTH = 'minLength'
 export const CONSTRAINT_MAX_LENGTH = 'maxLength'
-export const CONSTRAINT_ARRAY = 'array'
-export const CONSTRAINT_INDEX = 'index'
 export const CONSTRAINT_VALUES = 'values'
 export const CONSTRAINT_MIN = 'min'
 export const CONSTRAINT_MAX = 'max'
 export const CONSTRAINT_REGEX = 'regex'
-export const REF = 'ref'
 
 export const VALID_BLOCK_TYPES = [
   CLASS,
@@ -36,13 +40,15 @@ export const VALID_ROW_TYPES = [
   DESCRIPTION,
   SUBCLASSOF,
   PROPERTIES,
-  RANGE
+  RANGE,
+  EXCLUDE_PARENT_PROPERTIES
 ]
 
 export const VALID_CLASS_ROW_TYPES = [
   DESCRIPTION,
   SUBCLASSOF,
-  PROPERTIES
+  PROPERTIES,
+  EXCLUDE_PARENT_PROPERTIES
 ]
 
 export const VALID_PROPERTY_ROW_TYPES = [
@@ -51,29 +57,33 @@ export const VALID_PROPERTY_ROW_TYPES = [
   PROPERTIES
 ]
 
-const isTrue = val => !!val
-const isNumber = val => typeof val === 'number'
-const isText = val => typeof val === 'string'
+// const isTrue = val => !!val
+// const isNumber = val => typeof val === 'number'
+// const isText = val => typeof val === 'string'
 
 /* Map contraints to their possible types */
 export const VALID_CONTRAINT_TYPES = {
-  [CONSTRAINT_REQUIRED]: isTrue,
-  [CONSTRAINT_MIN_ITEMS]: isNumber,
-  [CONSTRAINT_MAX_ITEMS]: isNumber,
-  [CONSTRAINT_MIN_LENGTH]: isNumber,
-  [CONSTRAINT_MAX_LENGTH]: isNumber,
-  [CONSTRAINT_ARRAY]: isTrue,
-  [CONSTRAINT_INDEX]: isTrue,
-  [CONSTRAINT_VALUES]: val => isNumber(val) || isText(val),
-  [CONSTRAINT_MIN]: isNumber,
-  [CONSTRAINT_MAX]: isNumber,
-  [CONSTRAINT_REGEX]: isText,
-  [REF]: isText
+  [CONSTRAINT_REQUIRED]: [],
+  [CONSTRAINT_ARRAY]: [],
+  [CONSTRAINT_INDEX]: [],
+  [CONSTRAINT_PRIMARY_KEY]: [],
+  [CONSTRAINT_UNIQUE]: [],
+  [CONSTRAINT_MIN_ITEMS]: [NUM],
+  [CONSTRAINT_MAX_ITEMS]: [NUM],
+  [CONSTRAINT_MIN_LENGTH]: [NUM],
+  [CONSTRAINT_MAX_LENGTH]: [NUM],
+  [CONSTRAINT_VALUES]: [NUM, STRING],
+  [CONSTRAINT_MIN]: [NUM],
+  [CONSTRAINT_MAX]: [NUM],
+  [CONSTRAINT_REGEX]: [STRING],
+  [REF]: [VAR]
 }
 
 /* These are property specific constraints */
 export const VALID_PROPERTY_CONSTRAINTS = [
   CONSTRAINT_REQUIRED,
+  CONSTRAINT_PRIMARY_KEY,
+  CONSTRAINT_UNIQUE,
   CONSTRAINT_MIN_ITEMS,
   CONSTRAINT_MAX_ITEMS,
   CONSTRAINT_ARRAY,

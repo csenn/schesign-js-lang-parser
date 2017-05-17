@@ -1,27 +1,48 @@
-import { croak, checkClassReference, checkPropertyReference} from './utils'
+import {croak, checkClassReference, checkPropertyReference} from './utils'
 import * as constants from '../constants'
 
+// function _exludeParentProperties (referenceNode) {
+
+// }
+
 function _processPropertyConstraints (referenceNode, constraints) {
-  const result = {}
+  const propertySpec = {}
+
   if ('required' in constraints) {
-    if ('minItems' in constraints) {
-      croak(referenceNode, '"required" and "minItems" can not be used together')
-    }
-    result.minItems = 1
+    propertySpec.required = true
   }
+
   if ('array' in constraints) {
-    if ('maxItems' in constraints) {
-      croak(referenceNode, '"array" and "maxItems" can not be used together')
+    propertySpec.array = true
+  }
+
+  if ('primaryKey' in constraints) {
+    propertySpec.primaryKey = true
+  }
+
+  if ('index' in constraints) {
+    propertySpec.index = true
+  }
+
+  if ('unique' in constraints) {
+    propertySpec.unique = true
+  }
+
+  if ('minItems' in constraints) {
+    if (!propertySpec.array) {
+      croak(referenceNode, '"minItems" can only be used with "array"')
     }
-    result.maxItems = null
+    propertySpec.minItems = parseInt(constraints.minItems)
   }
-  if (constraints.minItems) {
-    result.minItems = parseInt(constraints.minItems)
+
+  if ('maxItems' in constraints) {
+    if (!propertySpec.array) {
+      croak(referenceNode, '"maxItems" can only be used with "array"')
+    }
+    propertySpec.maxItems = parseInt(constraints.maxItems)
   }
-  if (constraints.maxItems) {
-    result.maxItems = parseInt(constraints.maxItems)
-  }
-  return result
+
+  return propertySpec
 }
 
 /* Reach in and grab the contraints we need */
@@ -60,10 +81,8 @@ function _getRange (context, ast) {
   }
 
   const type = constants.RANGE_PARENT_MAPPING[label]
-  const validConstraints = constants.VALID_RANGE_CONSTRAINTS[type]
+  const validConstraints = constants.VALID_RANGE_CONSTRAINTS[type] || []
   const reduced = _reduceConstraints(astRange, validConstraints)
-  // _processRangeConstraints(astRange, reduced)
-
   const range = Object.assign(reduced, { type })
 
   if (label !== type) {
@@ -71,13 +90,8 @@ function _getRange (context, ast) {
   }
 
   if (range.type === 'LinkedClass') {
-    checkClassReference(context, range.ref, ast[0])
+    checkClassReference(context, range.ref, astRange)
   }
-
-  // const err = validateRange(range)
-  // if (err) {
-  //   croak(astRange, `Invalid range: ${err}`)
-  // }
 
   return range
 }
@@ -95,6 +109,21 @@ function _getPropertySpecs (context, ast) {
     const ref = node.label.value
     checkPropertyReference(context, ref, node)
     return Object.assign(constraints, { ref })
+  })
+}
+
+function _getExcludeParentProperties (context, ast) {
+  if (ast.length === 0) {
+    croak(ast && ast[0], 'exludeParentProperties should be reference list')
+  }
+
+  return ast.map(astChild => {
+    if (astChild.type !== 'reference') {
+      croak(astChild, 'exludeParentProperties should be a reference')
+    }
+    const excluded = astChild.label.value
+    checkClassReference(context, excluded, astChild)
+    return excluded
   })
 }
 
@@ -118,5 +147,6 @@ export const transformBodyMap = {
   description: _getDescription,
   subClassOf: _getSubClassOf,
   properties: _getPropertySpecs,
-  range: _getRange
+  range: _getRange,
+  excludeParentProperties: _getExcludeParentProperties
 }

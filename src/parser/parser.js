@@ -1,6 +1,6 @@
 import * as constants from '../constants'
 
-function _readContraint (tokenStream) {
+function _readConstraint (tokenStream) {
   const constraintToken = tokenStream.next()
   if (constraintToken.type !== constants.VAR) {
     tokenStream.croak(constraintToken, `Value: "${constraintToken.value}" is invalid`)
@@ -33,6 +33,13 @@ function _readContraint (tokenStream) {
     }
   }
 
+  right.forEach(constraint => {
+    const allowed = constants.VALID_CONTRAINT_TYPES[constraintToken.value]
+    if (!allowed.includes(constraint.type)) {
+      tokenStream.croak(constraint, `Value: "${constraint.value}" should be one of: ${allowed.join(', ')}`)
+    }
+  })
+
   return {
     type: constants.ASSIGN,
     operator: '=',
@@ -42,9 +49,9 @@ function _readContraint (tokenStream) {
 }
 
 /*
-  something
-  something minItems=2
-  something required values=["hello", 3]
+  some_var
+  some_var minItems=2
+  some_var required values=["hello", 3]
 */
 function _readReference (tokenStream) {
   const labelToken = tokenStream.next()
@@ -54,9 +61,6 @@ function _readReference (tokenStream) {
   const constraints = []
   while (!tokenStream.eof()) {
     const next = tokenStream.peek(1)
-    // if (constants.VALID_ROW_TYPES.includes(next.value)) {
-    //   tokenStream.croak(next, `Value: "${next.value}" shssould be ";"`)
-    // }
     if (next.value === ',' || next.value === ';') {
       break
     }
@@ -65,7 +69,7 @@ function _readReference (tokenStream) {
     if (!validContraints.includes(next.value)) {
       tokenStream.croak(next, `Value: "${next.value}" must be one of ${validContraints.join(', ')}`)
     }
-    constraints.push(_readContraint(tokenStream))
+    constraints.push(_readConstraint(tokenStream))
   }
 
   return {

@@ -1,0 +1,24 @@
+Class class3 {
+  properties:
+    o/tests/linked_nodes_1/0.1.0/property/a,
+    c,
+    d;
+}
+
+Class class4 {
+  properties:
+    o/tests/linked_nodes_1/0.1.0/property/a,
+    e;
+}
+
+Property c {
+  range: LinkedClass ref=o/tests/linked_nodes_1/0.1.0/class/class2;
+}
+
+Property d {
+  range: LinkedClass ref=class4;
+}
+
+Property e {
+  range: Text;
+}

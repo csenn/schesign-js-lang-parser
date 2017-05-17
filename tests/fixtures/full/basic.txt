@@ -1,0 +1,12 @@
+Class class_a {
+  description: "First Description";
+  properties: property_a;
+}
+
+Property property_a {
+  range: Text;
+}
+
+Property property_b {
+  range: Boolean;
+}

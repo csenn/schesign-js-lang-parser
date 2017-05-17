@@ -1,0 +1,22 @@
+Class class4 {
+  subClassOf: o/tests/inheritance_chain_1/0.1.0/class/class3;
+  excludeParentProperties: o/tests/inheritance_chain_1/0.1.0/property/a3;
+  properties: a, d;
+}
+
+Class class5 {
+  subClassOf: class4;
+  properties: e;
+}
+
+Property a {
+  range: Boolean;
+}
+
+Property d {
+  range: Text;
+}
+
+Property e {
+  range: Text;
+}

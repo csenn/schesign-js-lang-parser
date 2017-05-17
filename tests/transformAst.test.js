@@ -76,6 +76,14 @@ describe('transformAst should', () => {
         expect(error.message).to.equal('Line 2, Col 15 SubClassOf should be a single reference')
       })
     })
+    describe('excludeParentProperties', () => {
+      it('with double subclassof', () => {
+        const text = readText('error_node_key_excludeparentproperties_1.txt')
+        let error
+        try { getGraph(text) } catch (err) { error = err }
+        expect(error.message).to.equal('Line 2, Col 30 exludeParentProperties should be a reference')
+      })
+    })
     describe('properties', () => {
       it('when one is a string', () => {
         const text = readText('error_node_key_properties_1.txt')
@@ -93,7 +101,7 @@ describe('transformAst should', () => {
         const text = readText('error_node_key_properties_3.txt')
         let error
         try { getGraph(text) } catch (err) { error = err }
-        expect(error.message).to.equal('Line 2, Col 15 "values" is invalid. Can only be one of required, minItems, maxItems, array, index')
+        expect(error.message).to.equal('Line 2, Col 15 "values" is invalid. Can only be one of required, primaryKey, unique, minItems, maxItems, array, index')
       })
       it('when constraint is declared twice', () => {
         const text = readText('error_node_key_properties_4.txt')
@@ -101,17 +109,17 @@ describe('transformAst should', () => {
         try { getGraph(text) } catch (err) { error = err }
         expect(error.message).to.equal('Line 2, Col 15 minItems is a duplicated constraint')
       })
-      it('required and minItems should not be used together', () => {
+      it('minItems can only be used with array', () => {
         const text = readText('error_node_key_properties_5.txt')
         let error
         try { getGraph(text) } catch (err) { error = err }
-        expect(error.message).to.equal('Line 2, Col 15 "required" and "minItems" can not be used together')
+        expect(error.message).to.equal('Line 2, Col 15 "minItems" can only be used with "array"')
       })
-      it('array and maxItems should not be used together', () => {
+      it('check constraint types provided', () => {
         const text = readText('error_node_key_properties_6.txt')
         let error
         try { getGraph(text) } catch (err) { error = err }
-        expect(error.message).to.equal('Line 2, Col 15 "array" and "maxItems" can not be used together')
+        expect(error.message).to.equal('Line 2, Col 40 Value: "2" should be one of: num')
       })
     })
     describe('range', () => {

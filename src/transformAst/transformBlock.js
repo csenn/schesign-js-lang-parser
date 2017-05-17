@@ -24,6 +24,9 @@ export function transformClassBlock (context, astNode) {
   if (node.properties) {
     node.propertySpecs = node.properties
     delete node.properties
+  } else {
+    /* Provide a default empty array to satisfy specification */
+    node.propertySpecs = []
   }
   return Object.assign(node, {type: 'Class'})
 }
