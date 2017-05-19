@@ -2,11 +2,11 @@ import fs from 'fs'
 import path from 'path'
 import { expect } from 'chai'
 import { getGraph } from '../src'
-import basic from '../../schesign-graph-examples/graphs/import/basic'
-import recursion from '../../schesign-graph-examples/graphs/import/recursion'
-import propertyVariations from '../../schesign-graph-examples/graphs/import/property_variations'
-import linkedNodes2 from '../../schesign-graph-examples/graphs/import/linked_nodes_2'
-import inhertianceChain2 from '../../schesign-graph-examples/graphs/import/inheritance_chain_2'
+import basic from 'schesign-graph-examples/graphs/import/basic'
+import recursion from 'schesign-graph-examples/graphs/import/recursion'
+import propertyVariations from 'schesign-graph-examples/graphs/import/property_variations'
+import linkedNodes2 from 'schesign-graph-examples/graphs/import/linked_nodes_2'
+import inhertianceChain2 from 'schesign-graph-examples/graphs/import/inheritance_chain_2'
 
 const { describe, it } = global
 

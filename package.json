@@ -31,7 +31,7 @@
     "standard": "^10.0.2"
   },
   "dependencies": {
-    "schesign-graph-examples": "0.0.1",
+    "schesign-graph-examples": "0.0.12",
     "schesign-js-graph-utils": "0.1.16"
   }
 }

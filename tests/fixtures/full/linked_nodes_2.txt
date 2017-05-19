@@ -1,24 +1,24 @@
+# Imported classes and properties
+Class o/tests/linked_nodes_1/0.1.0/class/class2;
+Property o/tests/linked_nodes_1/0.1.0/property/f;
+
 Class class3 {
   properties:
     o/tests/linked_nodes_1/0.1.0/property/a,
+    o/tests/linked_nodes_1/0.1.0/property/b,
     c,
     d;
 }
 
 Class class4 {
   properties:
-    o/tests/linked_nodes_1/0.1.0/property/a,
-    e;
+    o/tests/linked_nodes_1/0.1.0/property/f;
 }
 
 Property c {
-  range: LinkedClass ref=o/tests/linked_nodes_1/0.1.0/class/class2;
+  range: LinkedClass ref=o/tests/linked_nodes_1/0.1.0/class/class1;
 }
 
 Property d {
   range: LinkedClass ref=class4;
-}
-
-Property e {
-  range: Text;
 }

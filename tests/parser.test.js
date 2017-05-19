@@ -448,5 +448,22 @@
           }
         ])
       })
+      it('create an imported node', () => {
+        const text = readText('node_imported_class.txt')
+        const ast = getAst(text)
+        expect(ast).to.deep.equal([
+          {
+            blockType: 'Class',
+            type: 'block',
+            label: {
+              type: 'var',
+              value: 'u/user_a/design_a/1.0.0/class/class_a',
+              start: { col: 6, line: 1, pos: 6 },
+              end: { col: 43, line: 1, pos: 43 }
+            },
+            body: null
+          }
+        ])
+      })
     })
   })

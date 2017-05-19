@@ -153,22 +153,23 @@ function _readBlock (tokenStream) {
     tokenStream.croak(labelToken, `${labelToken.value} is invalid`)
   }
 
-  const bracketToken = tokenStream.next()
-  if (bracketToken.value !== '{') {
-    tokenStream.croak(bracketToken, `${bracketToken.value} should be a "{"`)
-  }
-
-  const body = []
-  while (!tokenStream.eof()) {
-    const next = tokenStream.peek(1)
-    if (next.value === '}') {
-      tokenStream.next()
-      break
+  let body = null
+  const puncToken = tokenStream.next()
+  if (puncToken.value === '{') {
+    body = []
+    while (!tokenStream.eof()) {
+      const next = tokenStream.peek(1)
+      if (next.value === '}') {
+        tokenStream.next()
+        break
+      }
+      if (constants.VALID_BLOCK_TYPES.includes(next.value)) {
+        tokenStream.croak(next, `"${next.value}" should be a "}"`)
+      }
+      body.push(_readRow(tokenStream))
     }
-    if (constants.VALID_BLOCK_TYPES.includes(next.value)) {
-      tokenStream.croak(next, `"${next.value}" should be a "}"`)
-    }
-    body.push(_readRow(tokenStream))
+  } else if (puncToken.value !== ';') {
+    tokenStream.croak(puncToken, `${puncToken.value} should be a "{"`)
   }
 
   return {
